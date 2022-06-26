@@ -1,6 +1,7 @@
 package utils
 
 const (
+	// customer
 	INSERT_CUSTOMER = `insert into customer 
 						(id,name,address,phone,email,saldo) 
 						values (:id,:name,:address,:phone,:email,:saldo)`
@@ -17,4 +18,19 @@ const (
 
 	DELETE_CUSTOMER_PS_HD = `delete from customer where id=$1`
 	DELETE_CUSTOMER_PS_SD = `update customer set is_status=0 where id=$1`
+
+	// product
+	INSERT_PRODUCT = `insert into product 
+	(id,name,price,description,stock,store_id) 
+	values (:id,:name,:price,:description,:stock,:store_id)`
+
+	UPDATE_PRODUCT = `update product set name=:name, price=:price, description=:description, stock=:stock where id=:id`
+
+	DELETE_PRODUCT = `delete from product where id=$1`
+
+	INSERT_PRODUCT_PS = `insert into product 
+		(id,name,price,description,stock,store_id) 
+		values ($1,$2,$3,$4,$5,$6)`
+
+	UPDATE_PRODUCT_PS = `update product set name=$1, price=$2, description=$3, stock=$4 where id=$5`
 )
