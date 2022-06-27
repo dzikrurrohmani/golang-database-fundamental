@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"enigmacamp.com/go-db-fundamnetal/config"
+	"enigmacamp.com/go-db-fundamnetal/model"
 	"enigmacamp.com/go-db-fundamnetal/repository"
 	"enigmacamp.com/go-db-fundamnetal/usecase"
 	"enigmacamp.com/go-db-fundamnetal/utils"
@@ -37,12 +38,12 @@ func main() {
 	//cstUse.InsertCustomer(&customer)
 
 	// DELETE
-	customerId := "C001"
-	err := cstUse.DeleteCustomer(customerId)
-	if err != nil {
-		fmt.Println("error test")
-		fmt.Println(err.Error())
-	}
+	// customerId := "C001"
+	// err := cstUse.DeleteCustomer(customerId)
+	// if err != nil {
+	// 	fmt.Println("error test")
+	// 	fmt.Println(err.Error())
+	// }
 
 	// UPDATE
 	//customerUpdate := model.Customer{
@@ -53,4 +54,14 @@ func main() {
 	//	Id:      "1c63f19d-e896-4116-a847-2dbb75d7eae8",
 	//}
 	//cstRepo.Update(&customerUpdate)
+
+	// GET ALL
+	var customers []model.Customer
+
+	customers, err := cstUse.GetAll(1,2)
+	utils.IsError(err)
+
+	for _, customer := range customers {
+		fmt.Println(customer)
+	}
 }

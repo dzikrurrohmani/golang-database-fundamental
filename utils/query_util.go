@@ -17,4 +17,12 @@ const (
 
 	DELETE_CUSTOMER_PS_HD = `delete from customer where id=$1`
 	DELETE_CUSTOMER_PS_SD = `update customer set is_status=0 where id=$1`
+
+	SELECT_CUSTOMER_ALL = `SELECT id, name, address, phone, email, saldo
+						from customer order by created_at asc limit $1 offset $2`
+	SELECT_CUSTOMER_BY_ID = `SELECT id, name, address, phone, email, saldo
+						from customer where id=$1`
+	SELECT_CUSTOMER_BY_NAME = `SELECT id, name, address, phone, email, saldo
+						from customer where name ilike $1`
+
 )
