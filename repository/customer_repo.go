@@ -55,30 +55,31 @@ func (c *customerRepository) GetAll(page int, totalRow int) ([]model.Customer, e
 	limit := totalRow
 	offset := limit * (page - 1)
 
-	// // penggunaan fetch all data: select ($1), named query (:column_name), queryx
-	// customers := []model.Customer{}
-	// fmt.Println(customers)
-
-	// if err := c.db.Select(&customers, utils.SELECT_CUSTOMER_ALL, limit, offset); err != nil {
-	// 	utils.IsError(err)
-	// 	return nil, err
-	// }
-	// return customers, nil
-	// penggunaan fetch all data: select ($1), named query (:column_name), queryx()
-	customer := []model.Customer{}
-	err := c.db.Select(&customer, utils.SELECT_CUSTOMER_ALL, limit, offset)
-	if err != nil {
+	// penggunaan fetch all data: select ($1), named query (:column_name), queryx
+	customers := []model.Customer{}
+	if err := c.db.Select(&customers, utils.SELECT_CUSTOMER_ALL, limit, offset); err != nil {
+		utils.IsError(err)
 		return nil, err
+	}
+	return customers, nil
+}
+
+func (c *customerRepository) GetById(id string) (model.Customer, error) {
+	customer := model.Customer{}
+	if err := c.db.Get(&customer, utils.SELECT_CUSTOMER_BY_ID, id); err != nil {
+		utils.IsError(err)
+		return model.Customer{}, err
 	}
 	return customer, nil
 }
 
-func (c *customerRepository) GetById(id string) (model.Customer, error) {
-	panic("sek")
-}
-
 func (c *customerRepository) GetByName(name string) ([]model.Customer, error) {
-	panic("sek")
+	customers := []model.Customer{}
+	if err := c.db.Select(&customers, utils.SELECT_CUSTOMER_BY_NAME, "%"+name+"%"); err != nil {
+		utils.IsError(err)
+		return nil, err
+	}
+	return customers, nil
 }
 
 func NewCustomerRepository(db *sqlx.DB) CustomerRepository {

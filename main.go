@@ -58,10 +58,21 @@ func main() {
 	// GET ALL
 	var customers []model.Customer
 
-	customers, err := cstUse.GetAll(1,2)
+	customers, err := cstUse.FindAllCustomer(1, 2)
 	utils.IsError(err)
 
 	for _, customer := range customers {
 		fmt.Println(customer)
 	}
+
+	customers, err = cstUse.FindCustomerByName("bulan")
+	utils.IsError(err)
+
+	for _, customer := range customers {
+		fmt.Println(customer)
+	}
+
+	customer, err := cstUse.FindCustomerById("C004")
+	utils.IsError(err)
+	fmt.Println(customer)
 }
