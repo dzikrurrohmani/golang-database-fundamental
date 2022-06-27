@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"enigmacamp.com/go-db-fundamnetal/model"
+	"enigmacamp.com/go-db-fundamnetal/model/dto"
 	"enigmacamp.com/go-db-fundamnetal/repository"
 )
 
@@ -12,6 +13,9 @@ type CustomerUseCase interface {
 	FindAllCustomer(page int, totalRow int) ([]model.Customer,error)
 	FindCustomerById(id string) (model.Customer, error)
 	FindCustomerByName(name string) ([]model.Customer, error)
+	GetTotalBalanceActiveCustomer() (int, error)
+	GetTotalCustomer() ([]dto.CustomerCount, error)
+	GetTotalCustomerByAddress() ([]dto.CustomerAddress, error)
 }
 
 type customerUseCase struct {
@@ -41,6 +45,19 @@ func (c *customerUseCase) FindCustomerById(id string) (model.Customer, error){
 func (c *customerUseCase) FindCustomerByName(name string) ([]model.Customer, error){
 	return c.repo.GetByName(name)
 }
+
+func (c *customerUseCase) GetTotalBalanceActiveCustomer() (int, error) {
+	return c.repo.GetSum()
+}
+
+func (c *customerUseCase) GetTotalCustomer() ([]dto.CustomerCount, error) {
+	return c.repo.GetCount()
+}
+
+func (c *customerUseCase) GetTotalCustomerByAddress() ([]dto.CustomerAddress, error) {
+	return c.repo.GetCountByAddress()
+}
+
 
 func NewCustomerUseCase(repo repository.CustomerRepository) CustomerUseCase {
 	usc := new(customerUseCase)
