@@ -15,16 +15,16 @@ type productUseCase struct {
 	repo repository.ProductRepository
 }
 
-func (c *productUseCase) InsertProduct(product *model.Product) error {
-	return c.repo.Insert(product)
+func (p *productUseCase) InsertProduct(product *model.Product) error {
+	return p.repo.Insert(product)
 }
 
-func (c *productUseCase) UpdateProduct(product *model.Product) error {
-	return c.repo.Update(product)
+func (p *productUseCase) UpdateProduct(product *model.Product) error {
+	return p.repo.Update(product)
 }
 
-func (c *productUseCase) DeleteProduct(id string) error {
-	return c.repo.Delete(id)
+func (p *productUseCase) DeleteProduct(id string) error {
+	return p.repo.Delete(id)
 }
 
 func NewProductUseCase(repo repository.ProductRepository) ProductUseCase {

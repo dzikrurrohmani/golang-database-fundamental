@@ -18,8 +18,8 @@ type productRepository struct {
 	db *sqlx.DB
 }
 
-func (c *productRepository) Insert(product *model.Product) error {
-	_, err := c.db.NamedExec(utils.INSERT_PRODUCT, product)
+func (p *productRepository) Insert(product *model.Product) error {
+	_, err := p.db.NamedExec(utils.INSERT_PRODUCT, product)
 	err = utils.IsError(err)
 	if err != nil {
 		return err
@@ -28,8 +28,8 @@ func (c *productRepository) Insert(product *model.Product) error {
 	return nil
 }
 
-func (c *productRepository) Update(product *model.Product) error {
-	_, err := c.db.NamedExec(utils.UPDATE_PRODUCT, product)
+func (p *productRepository) Update(product *model.Product) error {
+	_, err := p.db.NamedExec(utils.UPDATE_PRODUCT, product)
 	err = utils.IsError(err)
 	if err != nil {
 		return err
@@ -38,13 +38,13 @@ func (c *productRepository) Update(product *model.Product) error {
 	return nil
 }
 
-func (c *productRepository) Delete(id string) (err error) {
+func (p *productRepository) Delete(id string) (err error) {
 	defer func() {
 		if e := recover(); e != nil {
 			err = errors.New("delete fail")
 		}
 	}()
-	c.db.MustExec(utils.DELETE_PRODUCT, id)
+	p.db.MustExec(utils.DELETE_PRODUCT, id)
 	return
 }
 
