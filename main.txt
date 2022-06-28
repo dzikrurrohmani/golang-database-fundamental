@@ -1,0 +1,192 @@
+package main
+
+import (
+	"fmt"
+	"go-db/model"
+	"go-db/utils"
+	"log"
+
+	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq" // kalo lupa import -> unknown driver "postgres" (forgotten import?)
+)
+
+func main() {
+	/*
+		dbHost := "localhost"
+		dbPort := "5432"
+		dbUser := "postgres"
+		dbPassword := "keluargaRS1"
+		dbName := "golang_db_fundamental"
+
+		// urutan url koneksi ke db postgres
+		// postgres://dbUser:dbPassword@dbHost:dbPort/dbName
+		dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s", dbUser, dbPassword, dbHost, dbPort, dbName)
+		// dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", dbUser, dbPassword, dbHost, dbPort, dbName)
+	*/
+	// dsn := GetDataSourceName(newConfigWithEnv())
+	// db, err := sqlx.Connect("postgres", dsn)
+	// if err != nil {
+	// 	panic(err.Error())
+	// } else {
+	// 	fmt.Println("connected")
+	// }
+
+	config := NewConfigDB()
+	db := config.DbConn()
+
+	defer func(db *sqlx.DB) {
+		err := db.Close()
+		if err != nil {
+			panic(err.Error())
+		} else {
+			fmt.Println("disconnected")
+		}
+	}(db)
+
+	/*
+		Manipulasi : INSERT, UPDATE, DELETE
+	*/
+
+	// INSERT
+
+	/*
+		// 1 DOANG
+		customer := map[string]interface{}{
+			"id":      "C001",
+			"name":    "Bulan Sutisna",
+			"address": "Bandung",
+			"phone":   "027100000",
+			"email":   "bulan.sutisna@gmail.com",
+			"saldo":   1000000,
+		}
+
+		// BANYAK
+		customers := []map[string]interface{}{
+			{
+				"id":      "C002",
+				"name":    "Djan Riderr",
+				"address": "Bogor",
+				"phone":   "027100001",
+				"email":   "djan.riders@gmail.com",
+				"saldo":   1000000,
+			},
+			{
+				"id":      "C003",
+				"name":    "Mamang Resing",
+				"address": "Bekasi",
+				"phone":   "027100002",
+				"email":   "mamang.resing@gmail.com",
+				"saldo":   1000000,
+			},
+			{
+				"id":      "C004",
+				"name":    "Megalodon Surakarta",
+				"address": "Surakarta",
+				"phone":   "027100003",
+				"email":   "megalodon.tok@gmail.com",
+				"saldo":   1000000,
+			},
+			{
+				"id":      "C005",
+				"name":    "Dona Dini",
+				"address": "Bandung",
+				"phone":   "027100004",
+				"email":   "dona.dini@gmail.com",
+				"saldo":   1000000,
+			},
+			{
+				"id":      "C006",
+				"name":    "Tika Tiki",
+				"address": "Lampung",
+				"phone":   "027100005",
+				"email":   "tika.tok@gmail.com",
+				"saldo":   "1000",// "data",
+			},
+		}
+	*/
+	/*
+		customerStruct := model.Customer{
+			Id:      "C007",
+			Name:    "Atta Mini",
+			Address: "Jakarta",
+			Phone:   "027100006",
+			Email:   "atta.mini@gmail.com",
+			Balance: 9000000,
+		}
+		_, err = db.NamedExec(utils.INSERT_CUSTOMER, customerStruct)
+		if err != nil {
+			log.Println(err)
+		} else {
+			log.Println("success")
+		}
+	*/
+	// WITH PREPARED STATEMENT
+	// -> Menghindari adanya sql injection
+	// -> Code lebih efisien karena bisa digunakan berulang kali
+	// -> database.Preparex(query)
+	// -> stmt.MustExec(value)
+
+	// id := uuid.New()
+	// customerStruct := model.Customer{
+	// 	Id:      id.String(),
+	// 	Name:    "Rara Mendung",
+	// 	Address: "Semarang",
+	// 	Phone:   "027100009",
+	// 	Email:   "rara.mendung@gmail.com",
+	// 	Balance: 89000,
+	// }
+	// stmt, err := db.Preparex(utils.INSERT_CUSTOMER_PS)
+	// if err != nil {
+	// 	log.Println(err.Error())
+	// } else {
+	// 	log.Println("success")
+	// }
+
+	// stmt.MustExec(customerStruct.Id, customerStruct.Name, customerStruct.Address, customerStruct.Phone, customerStruct.Email, customerStruct.Balance)
+
+	// Update
+	// customerStruct := model.Customer{
+	// 	Name:    "Rara Terik",
+	// 	Address: "Pati",
+	// 	Phone:   "027100009",
+	// 	Email:   "rara.mendung@gmail.com",
+	// 	Id:      "6642303b-93ae-4c65-b06f-dcd74c1cdc24",
+	// }
+	// stmt, err := db.Preparex(utils.UPDATE_CUSTOMER_PS)
+	// if err != nil {
+	// 	log.Println(err.Error())
+	// } else {
+	// 	log.Println("success")
+	// }
+
+	// stmt.MustExec(customerStruct.Name, customerStruct.Address, customerStruct.Phone, customerStruct.Email, customerStruct.Id)
+
+	// DELETE
+	customerStruct := model.Customer{
+		Id: "C002",
+	}
+	stmt, err := db.Preparex(utils.DELETE_CUSTOMER_SD)
+	if err != nil {
+		log.Println(err.Error())
+	} else {
+		log.Println("success")
+	}
+
+	stmt.MustExec(customerStruct.Id)
+}
+
+// func newConfigWithEnv() Config {
+// 	// dbHost := os.Getenv("GOROOT")
+// 	dbHost := os.Getenv("TEMPDBHOST")
+// 	dbPort := os.Getenv("TEMPDBPORT")
+// 	dbName := os.Getenv("TEMPDBNAME")
+// 	dbUser := os.Getenv("TEMPDBUSER")
+// 	dbPassword := os.Getenv("TEMPDBPASSWORD")
+// 	return Config{
+// 		dbHost,
+// 		dbPort,
+// 		dbName,
+// 		dbUser,
+// 		dbPassword,
+// 	}
+// }
