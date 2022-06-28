@@ -1,7 +1,9 @@
 package utils
 
-import "github.com/google/uuid"
+import (
+	g "github.com/jutionck/generate-id"
+)
 
 func GenerateId() string {
-	return uuid.New().String()
+	return g.GenerateId()
 }

@@ -1,12 +1,10 @@
 package main
 
 import (
-	"fmt"
-	"time"
+	"database/sql"
+	"log"
 
 	"enigmacamp.com/go-db-fundamnetal/config"
-	"enigmacamp.com/go-db-fundamnetal/repository"
-	"enigmacamp.com/go-db-fundamnetal/usecase"
 	"enigmacamp.com/go-db-fundamnetal/utils"
 	"github.com/jmoiron/sqlx"
 )
@@ -20,37 +18,47 @@ func main() {
 			utils.IsError(err)
 		}
 	}(db)
-	cstRepo := repository.NewCustomerRepository(db)
-	cstUse := usecase.NewCustomerUseCase(cstRepo)
-	time.Sleep(time.Second)
 
-	// INSERT
-	//cstId := utils.GenerateId()
-	//customer := model.Customer{
-	//	Id:      cstId,
-	//	Name:    "Jution Kirana",
-	//	Address: "Ragunan",
-	//	Phone:   "08292929",
-	//	Email:   "jutionck@gmail.com",
-	//	Balance: 150000,
-	//}
-	//cstUse.InsertCustomer(&customer)
+	//sample.ShopRun(db)
+	//sample.CustomerRun(db)
 
-	// DELETE
-	customerId := "C001"
-	err := cstUse.DeleteCustomer(customerId)
-	if err != nil {
-		fmt.Println("error test")
-		fmt.Println(err.Error())
+	// Transactional
+
+	// Begin
+	defer func() {
+		if r := recover(); r != nil {
+			log.Println("aplikasi gagal di jalankan....")
+		}
+	}()
+	tx := db.MustBegin()
+	cstId := "10001" // Bulan
+	cstId02 := 10002
+	rslt := tx.MustExec(`update customer set saldo=(saldo-200) where id=$1`, cstId)
+	cek(rslt, tx)
+	rslt2 := tx.MustExec(`update customer set saldo=(saldo+200) where id=$1`, cstId02)
+	r2, _ := rslt2.RowsAffected()
+	if r2 == 0 {
+		tx.Rollback()
 	}
-
-	// UPDATE
-	//customerUpdate := model.Customer{
-	//	Name:    "Jution Aja",
-	//	Address: "Ragunan",
-	//	Phone:   "08292929",
-	//	Email:   "jutionck@gmail.com",
-	//	Id:      "1c63f19d-e896-4116-a847-2dbb75d7eae8",
-	//}
-	//cstRepo.Update(&customerUpdate)
+	// Commitgit
+	tx.Commit()
 }
+
+func cek(rslt sql.Result, tx *sqlx.Tx){
+	if r, _ := rslt.RowsAffected(); r == 0 {
+		tx.Rollback()
+	}
+}
+
+
+/**
+# Fetching
+-> Get All (x)
+-> Get By Id (x)
+-> Get By Name (x)
+-> Aggregate:
+   -> count
+   -> sum
+   -> etc...
+-> Join
+*/
